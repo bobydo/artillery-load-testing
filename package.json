@@ -21,7 +21,8 @@
     "test:artillery": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery.yaml --output reports/load-test-$timestamp.json\"",
     "test:artillery:html": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery.yaml --output reports/load-test-$timestamp.json; artillery report reports/load-test-$timestamp.json --output reports/load-test-$timestamp.html\"",
     "test:artillery:quick": "artillery run ./artillery.yaml",
-    "report:open": "powershell -ExecutionPolicy Bypass -File scripts/view-report.ps1"
+    "report:open": "powershell -ExecutionPolicy Bypass -File scripts/view-report.ps1",
+    "test:artillery_summary": "powershell -ExecutionPolicy Bypass -File scripts/artillery_summary.ps1"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.20",
