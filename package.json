@@ -26,7 +26,10 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test:cypress:login": "cypress run --spec cypress/e2e/login.cy.js",
-    "test:artillery:login": "artillery run ./artillery-login.yaml"
+    "test:artillery:login": "artillery run ./artillery-login.yaml",
+    "test:artillery:login:json": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery-login.yaml --output reports/login-test-$timestamp.json\"",
+    "test:artillery:login:html": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery-login.yaml --output reports/login-test-$timestamp.json; artillery report reports/login-test-$timestamp.json --output reports/login-test-$timestamp.html\"",
+    "test:artillery:login:summary": "powershell -ExecutionPolicy Bypass -File scripts/artillery_login_summary.ps1"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.20",
