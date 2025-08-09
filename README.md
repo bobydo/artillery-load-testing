@@ -153,4 +153,85 @@ The login feature uses a shared configuration file `config/login-config.yaml` th
 
 This allows frontend and backend developers to work in parallel using the same "contract."
 
+#### Automatic HTML-to-Config Synchronization
+```bash
+# Manually sync HTML changes to YAML config
+yarn run sync:html-to-config
+
+# Watch for HTML changes and auto-sync (development mode)
+yarn run watch:html-changes
+
+# PowerShell version of manual sync
+yarn run sync:html-to-config:ps
+```
+
+When you change selectors in `public/login.html`, run the sync command to automatically update the YAML configuration. This ensures your tests stay in sync with UI changes.
+
 - Edit `artillery-login.yaml` to match your real login API and payload if needed.
+
+## HTML-to-YAML Configuration Sync
+Contract file login-config.yaml between login.html and cypress test
+![open 2 terminals](readme/locatorContact.png)
+
+### Commands
+```bash
+# Manually sync HTML changes to YAML config (full-featured)
+yarn run sync:html-to-config
+
+# Lightweight sync (no external dependencies)
+yarn run sync:html-to-config:simple
+
+# Watch for HTML changes and auto-sync (development mode)
+yarn run watch:html-changes
+
+# PowerShell version of manual sync
+yarn run sync:html-to-config:ps
+```
+
+### Example Output - Manual Sync
+```
+$ yarn run sync:html-to-config
+🔄 Analyzing HTML file for selector changes...
+🔍 Detected selectors from HTML:
+   • username_input: #user-name
+   • password_input: #password
+   • submit_button: button[type="submit"]
+   • welcome_message: #welcome
+   • error_message: .error-message
+   • page_title: h1
+📋 Backed up current config to: login-config.yaml.backup
+✅ Configuration updated successfully!
+📝 Changes made:
+   • username_input: #username → #user-name
+📊 Change report generated: reports/config-changes.md
+```
+
+### Example Output - Watch Mode
+```
+$ yarn run watch:html-changes
+👀 Watching for HTML changes...
+📁 Monitoring: D:\newjob\artillery-load-testing\public\login.html
+🔄 Auto-sync enabled - YAML config will update when HTML changes 
+⏹️  Press Ctrl+C to stop
+
+📝 HTML file changed at 3:42:50 PM
+🔄 Analyzing HTML file for selector changes...
+✅ Configuration updated successfully!
+📝 Changes made:
+   • username_input: #username → #user-name
+
+👀 Continuing to watch for changes...
+```
+
+### How It Works
+1. **Detects Changes**: Monitors `public/login.html` for selector modifications
+2. **Smart Extraction**: Prioritizes selectors (ID > class > data-testid > name > type)
+3. **Updates Config**: Automatically updates `config/login-config.yaml`
+4. **Creates Backups**: Saves backup files before making changes
+5. **Generates Reports**: Creates detailed change reports in `reports/config-changes.md`
+
+### Use Cases
+- **Frontend Developer**: Change HTML selectors without breaking tests
+- **QA Engineer**: Ensure test selectors stay synchronized with UI
+- **Team Workflow**: Maintain configuration contract automatically
+- **CI/CD Pipeline**: Integrate with git hooks for automatic sync
