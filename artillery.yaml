@@ -1,31 +1,57 @@
+# Artillery Load Testing Configuration
+# This file defines the load testing scenarios and performance thresholds
+
 config:
+  # Target URL for the load test - the application being tested
   target: http://localhost:3000
+  
+  # Load test phases - defines how traffic will be generated over time
   phases:
-    - duration: 60
-      arrivalRate: 1
-      rampTo: 5
-      name: Warm up
-    - duration: 60
-      arrivalRate: 5
-      rampTo: 10
-      name: Ramp up
-    - duration: 30
-      arrivalRate: 10
-      rampTo: 30
-      name: Spike
+    # Phase 1: Warm up phase
+    - duration: 60          # Run for 60 seconds
+      arrivalRate: 1        # Start with 1 virtual user per second
+      rampTo: 5             # Gradually increase to 5 users per second by the end
+      name: Warm up         # Human-readable name for this phase
+    
+    # Phase 2: Ramp up phase
+    - duration: 60          # Run for 60 seconds
+      arrivalRate: 5        # Start with 5 virtual users per second
+      rampTo: 10            # Gradually increase to 10 users per second by the end
+      name: Ramp up         # Human-readable name for this phase
+    
+    # Phase 3: Spike testing phase
+    - duration: 30          # Run for 30 seconds
+      arrivalRate: 10       # Start with 10 virtual users per second
+      rampTo: 30            # Spike up to 30 users per second by the end
+      name: Spike           # Human-readable name for this phase
+  
+  # Plugins extend Artillery's functionality with additional features
   plugins:
-    ensure: {}
-    apdex: {}
-    metrics-by-endpoint: {}
+    ensure: {}                    # Plugin for setting performance thresholds/SLA
+    apdex: {}                     # Application Performance Index scoring
+    metrics-by-endpoint: {}       # Collect metrics grouped by endpoint
+  
+  # Apdex (Application Performance Index) configuration
+  # Measures user satisfaction based on response times
   apdex:
-    threshold: 100
+    threshold: 100        # Response times <= 100ms are considered "satisfying"
+                         # 100-400ms are "tolerating", >400ms are "frustrating"
+  
+  # Performance thresholds - test will fail if these are not met
   ensure:
     thresholds:
+      # 99th percentile response time must be <= 100ms
+      # This means 99% of requests should complete within 100ms
       - http.response_time.p99: 100
+      
+      # 95th percentile response time must be <= 75ms
+      # This means 95% of requests should complete within 75ms
       - http.response_time.p95: 75
+
+# Test scenarios define what actions virtual users will perform
 scenarios:
-  - flow:
-      - loop:
-          - get:
-              url: '/'
-        count: 100
+  - flow:                 # Define a sequence of actions for each virtual user
+      - loop:             # Repeat the following actions
+          - get:          # Make an HTTP GET request
+              url: '/'    # To the root endpoint of the target application
+        count: 100        # Repeat this loop 100 times per virtual user
