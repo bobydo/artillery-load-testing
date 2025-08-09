@@ -1,0 +1,88 @@
+# UI/API/QA Configuration for Login Feature (login-config.yaml)
+# This file serves as a contract between frontend, backend and QA automation developers
+# Frontend devs use the selectors, QA & backend devs implement the test cases
+
+ui:
+  login_page:
+    # CSS selectors for UI elements
+    selectors:
+      username_input: '#username'
+      password_input: '#password'
+      submit_button: 'button[type="submit"]'
+      welcome_message: '#welcome'
+      error_message: '.error-message'
+      loading_spinner: '.loading'
+      remember_me_checkbox: '#remember-me'
+      forgot_password_link: 'a[href="/forgot-password"]'
+    
+    # Text content expectations
+    text:
+      page_title: 'Login'
+      submit_button_text: 'Login'
+      welcome_message_text: 'Welcome'
+      error_invalid_credentials: 'Invalid username or password'
+      
+    # URLs
+    urls:
+      login_page: '/login'
+      success_redirect: '/dashboard'
+      forgot_password: '/forgot-password'
+
+api:
+  login:
+    # API endpoint details
+    endpoint: '/auth/login'
+    method: 'POST'
+    headers:
+      content_type: 'application/json'
+    
+    # Request/Response schemas
+    request_schema:
+      username: 'string'
+      password: 'string'
+      remember_me: 'boolean'
+    
+    response_schema:
+      success:
+        token: 'string'
+        user_id: 'number'
+        expires_in: 'number'
+      error:
+        message: 'string'
+        error_code: 'string'
+
+test_data:
+  # Test user accounts
+  valid_users:
+    - username: 'testuser'
+      password: 'testpassword'
+      expected_user_id: 1
+    - username: 'admin'
+      password: 'adminpass'
+      expected_user_id: 2
+  
+  invalid_users:
+    - username: 'wronguser'
+      password: 'wrongpass'
+      expected_error: 'Invalid username or password'
+    - username: ''
+      password: 'testpass'
+      expected_error: 'Username is required'
+    - username: 'testuser'
+      password: ''
+      expected_error: 'Password is required'
+
+performance:
+  # Artillery load test configuration
+  load_test:
+    target: 'http://localhost:3000'
+    phases:
+      - duration: 60
+        arrival_rate: 5
+        ramp_to: 20
+    
+    thresholds:
+      max_response_time_p95: 500  # milliseconds
+      max_response_time_p99: 1000 # milliseconds
+      min_success_rate: 95        # percentage
+      max_error_rate: 5           # percentage

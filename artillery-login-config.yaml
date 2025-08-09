@@ -1,0 +1,26 @@
+# Artillery scenario using configuration file
+# This loads test data from the shared config to ensure consistency
+
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20
+      name: "Config-Driven Login Load Test"
+  payload:
+    path: "./config/artillery-payload.csv"
+    fields:
+      - "username"
+      - "password"
+
+scenarios:
+  - name: "Login with Config Data"
+    flow:
+      - post:
+          url: "/login"
+          json:
+            username: "{{ username }}"
+            password: "{{ password }}"
+          expect:
+            - statusCode: 200

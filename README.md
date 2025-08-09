@@ -129,6 +129,12 @@ yarn run test:artillery:login:json
 # Login test with timestamped JSON + HTML reports
 yarn run test:artillery:login:html
 
+# Config-driven login test (uses shared YAML configuration)
+yarn run test:artillery:login:config
+
+# Generate test data from configuration
+yarn run generate:test-data
+
 # Summarize the latest login test JSON report
 yarn run test:artillery:login:summary
 ```
@@ -137,5 +143,14 @@ yarn run test:artillery:login:summary
 Login test reports are saved in the `reports/` directory with timestamps:
 - **JSON reports**: `login-test-YYYY-MM-DD_HH-mm-ss.json` (machine-readable)
 - **HTML reports**: `login-test-YYYY-MM-DD_HH-mm-ss.html` (human-readable)
+
+### Configuration-Driven Development
+The login feature uses a shared configuration file `config/login-config.yaml` that defines:
+- **UI Selectors**: CSS selectors for all login page elements
+- **Test Data**: Valid/invalid user credentials for testing
+- **API Contracts**: Expected request/response formats
+- **Performance Thresholds**: Acceptable response times and success rates
+
+This allows frontend and backend developers to work in parallel using the same "contract."
 
 - Edit `artillery-login.yaml` to match your real login API and payload if needed.
