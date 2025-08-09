@@ -89,21 +89,16 @@ Reports are saved in the `reports/` directory with timestamps:
 ```
 
 ### Summarize the latest Artillery JSON report (human-readable)
+```
 $ yarn run test:artillery_summary
-
+```
 This will print a summary to the console, showing if your test PASSED or FAILED thresholds, and why.
 
-## Test
+### Test
 
-```bash
-# unit tests
-$ yarn run test
-
-### e2e tests
 ```
+$ yarn run test
 $ yarn run test:e2e
-
-# test coverage
 $ yarn run test:cov
 ```
 
@@ -144,4 +139,3 @@ Login test reports are saved in the `reports/` directory with timestamps:
 - **HTML reports**: `login-test-YYYY-MM-DD_HH-mm-ss.html` (human-readable)
 
 - Edit `artillery-login.yaml` to match your real login API and payload if needed.
-)
