@@ -1,0 +1,18 @@
+# Artillery scenario to load test the login endpoint (mocked)
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20
+      name: Login Load
+scenarios:
+  - name: Login
+    flow:
+      - post:
+          url: "/login"
+          json:
+            username: "testuser"
+            password: "testpassword"
+          expect:
+            - statusCode: 200
