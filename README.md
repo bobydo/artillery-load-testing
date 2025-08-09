@@ -81,17 +81,17 @@ Reports are saved in the `reports/` directory with timestamps:
 - **Request Rate**: Requests per second handled
 - **Success Rate**: Percentage of successful requests
 
-## Export report configured in package.json
+### Export report configured in package.json
 ```
     "test:artillery": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery.yaml --output reports/load-test-$timestamp.json\"",
     "test:artillery:html": "powershell -Command \"$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; New-Item -ItemType Directory -Force -Path reports; artillery run ./artillery.yaml --output reports/load-test-$timestamp.json; artillery report reports/load-test-$timestamp.json --output reports/load-test-$timestamp.html\"",
     "test:artillery:quick": "artillery run ./artillery.yaml"
 ```
 
-# Summarize the latest Artillery JSON report (human-readable)
+### Summarize the latest Artillery JSON report (human-readable)
 $ yarn run test:artillery_summary
 
-# This will print a summary to the console, showing if your test PASSED or FAILED thresholds, and why.
+This will print a summary to the console, showing if your test PASSED or FAILED thresholds, and why.
 
 ## Test
 
@@ -99,28 +99,15 @@ $ yarn run test:artillery_summary
 # unit tests
 $ yarn run test
 
-# e2e tests
+### e2e tests
+```
 $ yarn run test:e2e
 
 # test coverage
 $ yarn run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
-## Cypress E2E & Login Performance Testing
+### Cypress E2E & Login Performance Testing
 
 ### Cypress Login Test
 Open 2 terminals
