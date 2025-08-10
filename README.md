@@ -240,7 +240,7 @@ $ yarn run watch:html-changes
 
 ## Cypress Debug
 
-## Claude Sonnet 4.0 gave up info => Cypress debugging is notoriously difficult because:
+### Claude Sonnet 4.0 gave up info => Cypress debugging is notoriously difficult because:
 1. Cypress runs in an Electron process (not pure Node.js)
 2. It has multiple processes running
 3. NODE_OPTIONS debugging often doesn't work reliably
