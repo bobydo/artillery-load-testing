@@ -1,8 +1,6 @@
 // cypress/support/config-loader.js
 // Utility to load and parse the login configuration YAML
-
-const yaml = require('js-yaml');
-
+import { load } from 'js-yaml';
 class ConfigLoader {
   constructor() {
     this.config = null;
@@ -11,7 +9,7 @@ class ConfigLoader {
   loadConfig() {
     // Use Cypress task to read file from Node.js environment
     return cy.task('readLoginConfig').then((configData) => {
-      this.config = yaml.load(configData);
+      this.config = load(configData);
       return this.config;
     });
   }
@@ -19,7 +17,9 @@ class ConfigLoader {
   // Synchronous version that requires config to be pre-loaded
   getConfigSync() {
     if (!this.config) {
-      throw new Error('Configuration not loaded. Call loadConfig() first in your test.');
+      throw new Error(
+        'Configuration not loaded. Call loadConfig() first in your test.',
+      );
     }
     return this.config;
   }

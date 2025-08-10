@@ -1,61 +1,66 @@
 // scripts/sync-html-to-config-simple.js
 // Lightweight HTML-to-YAML syncer using built-in Node.js modules only
 
-const fs = require('fs');
-const path = require('path');
-const yaml = require('js-yaml');
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+import { load, dump } from 'js-yaml';
 
 class SimpleHTMLConfigSyncer {
   constructor() {
-    this.htmlPath = path.join(__dirname, '..', 'public', 'login.html');
-    this.configPath = path.join(__dirname, '..', 'config', 'login-config.yaml');
-    this.backupPath = path.join(__dirname, '..', 'config', 'login-config.yaml.backup');
+    this.htmlPath = join(__dirname, '..', 'public', 'login.html');
+    this.configPath = join(__dirname, '..', 'config', 'login-config.yaml');
+    this.backupPath = join(
+      __dirname,
+      '..',
+      'config',
+      'login-config.yaml.backup',
+    );
   }
 
   async syncConfig() {
     try {
       console.log('🔄 Analyzing HTML file for selector changes...');
-      
+
       // Read HTML file
-      const htmlContent = fs.readFileSync(this.htmlPath, 'utf8');
-      
+      const htmlContent = readFileSync(this.htmlPath, 'utf8');
+
       // Extract selectors using regex patterns
       const detectedSelectors = this.extractSelectorsWithRegex(htmlContent);
-      
+
       // Read current YAML config
-      const configContent = fs.readFileSync(this.configPath, 'utf8');
-      const config = yaml.load(configContent);
+      const configContent = readFileSync(this.configPath, 'utf8');
+      const config = load(configContent);
 
       // Backup current config
-      fs.writeFileSync(this.backupPath, configContent);
+      writeFileSync(this.backupPath, configContent);
       console.log(`📋 Backed up current config to: ${this.backupPath}`);
 
       // Update selectors in config
       const changes = this.updateSelectors(config, detectedSelectors);
-      
+
       if (changes.length > 0) {
         // Write updated config
-        const updatedYaml = yaml.dump(config, { 
+        const updatedYaml = dump(config, {
           lineWidth: -1,
           noRefs: true,
-          quotingType: "'"
+          quotingType: "'",
         });
-        
-        fs.writeFileSync(this.configPath, updatedYaml);
-        
+
+        writeFileSync(this.configPath, updatedYaml);
+
         console.log('✅ Configuration updated successfully!');
         console.log('📝 Changes made:');
-        changes.forEach(change => {
-          console.log(`   • ${change.selector}: ${change.oldValue} → ${change.newValue}`);
+        changes.forEach((change) => {
+          console.log(
+            `   • ${change.selector}: ${change.oldValue} → ${change.newValue}`,
+          );
         });
-        
+
         // Generate change report
         this.generateChangeReport(changes);
-        
       } else {
         console.log('✅ No changes detected - configuration is up to date!');
       }
-
     } catch (error) {
       console.error('❌ Error syncing configuration:', error.message);
       process.exit(1);
@@ -64,11 +69,15 @@ class SimpleHTMLConfigSyncer {
 
   extractSelectorsWithRegex(htmlContent) {
     const selectors = {};
-    
+
     // Username input - look for input with name="username" or id="username"
-    const usernameMatch = htmlContent.match(/<input[^>]*(?:name=["']username["']|id=["']([^"']+)["'])[^>]*>/i);
+    const usernameMatch = htmlContent.match(
+      /<input[^>]*(?:name=["']username["']|id=["']([^"']+)["'])[^>]*>/i,
+    );
     if (usernameMatch) {
-      const idMatch = htmlContent.match(/<input[^>]*id=["']([^"']+)["'][^>]*(?:name=["']username["']|type=["']text["'])/i);
+      const idMatch = htmlContent.match(
+        /<input[^>]*id=["']([^"']+)["'][^>]*(?:name=["']username["']|type=["']text["'])/i,
+      );
       if (idMatch) {
         selectors.username_input = `#${idMatch[1]}`;
       } else {
@@ -77,9 +86,13 @@ class SimpleHTMLConfigSyncer {
     }
 
     // Password input
-    const passwordMatch = htmlContent.match(/<input[^>]*(?:name=["']password["']|id=["']([^"']+)["'])[^>]*type=["']password["']/i);
+    const passwordMatch = htmlContent.match(
+      /<input[^>]*(?:name=["']password["']|id=["']([^"']+)["'])[^>]*type=["']password["']/i,
+    );
     if (passwordMatch) {
-      const idMatch = htmlContent.match(/<input[^>]*id=["']([^"']+)["'][^>]*type=["']password["']/i);
+      const idMatch = htmlContent.match(
+        /<input[^>]*id=["']([^"']+)["'][^>]*type=["']password["']/i,
+      );
       if (idMatch) {
         selectors.password_input = `#${idMatch[1]}`;
       } else {
@@ -88,7 +101,9 @@ class SimpleHTMLConfigSyncer {
     }
 
     // Submit button
-    const submitMatch = htmlContent.match(/<button[^>]*type=["']submit["'][^>]*>|<input[^>]*type=["']submit["'][^>]*>/i);
+    const submitMatch = htmlContent.match(
+      /<button[^>]*type=["']submit["'][^>]*>|<input[^>]*type=["']submit["'][^>]*>/i,
+    );
     if (submitMatch) {
       selectors.submit_button = 'button[type="submit"]';
     } else {
@@ -106,7 +121,9 @@ class SimpleHTMLConfigSyncer {
     }
 
     // Error message
-    const errorMatch = htmlContent.match(/<[^>]*class=["'][^"']*error-message[^"']*["'][^>]*>/i);
+    const errorMatch = htmlContent.match(
+      /<[^>]*class=["'][^"']*error-message[^"']*["'][^>]*>/i,
+    );
     if (errorMatch) {
       selectors.error_message = '.error-message';
     }
@@ -134,14 +151,14 @@ class SimpleHTMLConfigSyncer {
         changes.push({
           selector: key,
           oldValue: currentSelectors[key],
-          newValue: newValue
+          newValue: newValue,
         });
         currentSelectors[key] = newValue;
       } else if (!currentSelectors[key]) {
         changes.push({
           selector: key,
           oldValue: 'undefined',
-          newValue: newValue
+          newValue: newValue,
         });
         currentSelectors[key] = newValue;
       }
@@ -151,31 +168,31 @@ class SimpleHTMLConfigSyncer {
   }
 
   generateChangeReport(changes) {
-    const reportsDir = path.join(__dirname, '..', 'reports');
-    if (!fs.existsSync(reportsDir)) {
-      fs.mkdirSync(reportsDir, { recursive: true });
+    const reportsDir = join(__dirname, '..', 'reports');
+    if (!existsSync(reportsDir)) {
+      mkdirSync(reportsDir, { recursive: true });
     }
-    
-    const reportPath = path.join(reportsDir, 'config-changes.md');
-    
+
+    const reportPath = join(reportsDir, 'config-changes.md');
+
     let report = `# Configuration Changes Report\n\n`;
     report += `**Generated:** ${new Date().toLocaleString()}\n`;
     report += `**Source:** ${this.htmlPath}\n`;
     report += `**Target:** ${this.configPath}\n\n`;
-    
+
     report += `## Changes Made\n\n`;
-    changes.forEach(change => {
+    changes.forEach((change) => {
       report += `### ${change.selector}\n`;
       report += `- **Before:** \`${change.oldValue}\`\n`;
       report += `- **After:** \`${change.newValue}\`\n\n`;
     });
-    
+
     report += `## Impact\n\n`;
     report += `- ✅ Cypress tests will use updated selectors\n`;
     report += `- ✅ Artillery tests remain unaffected\n`;
     report += `- ⚠️  Review changes before committing to ensure accuracy\n\n`;
-    
-    fs.writeFileSync(reportPath, report);
+
+    writeFileSync(reportPath, report);
     console.log(`📊 Change report generated: ${reportPath}`);
   }
 }
@@ -186,4 +203,4 @@ if (require.main === module) {
   syncer.syncConfig();
 }
 
-module.exports = { SimpleHTMLConfigSyncer };
+export default { SimpleHTMLConfigSyncer };

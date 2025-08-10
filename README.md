@@ -285,3 +285,6 @@ To debug Cypress and hit breakpoints in `cypress.config.js` in VS Code:
 **Note:**
 - Do not use `.bin/cypress` (it's a shell script). Always use the real Node.js entry: `node_modules/cypress/bin/cypress`.
 - This method allows you to hit breakpoints in your config and custom tasks.
+
+## Yaml to javascript object
+![js-yaml](readme/js-yaml.png)

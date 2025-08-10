@@ -15,13 +15,17 @@ class HTMLWatcher {
   startWatching() {
     console.log('👀 Watching for HTML changes...');
     console.log(`📁 Monitoring: ${this.htmlPath}`);
-    console.log('🔄 Auto-sync enabled - YAML config will update when HTML changes');
+    console.log(
+      '🔄 Auto-sync enabled - YAML config will update when HTML changes',
+    );
     console.log('⏹️  Press Ctrl+C to stop\n');
 
     fs.watchFile(this.htmlPath, { interval: 1000 }, (curr, prev) => {
       if (curr.mtime !== prev.mtime) {
-        console.log(`\n📝 HTML file changed at ${new Date().toLocaleTimeString()}`);
-        
+        console.log(
+          `\n📝 HTML file changed at ${new Date().toLocaleTimeString()}`,
+        );
+
         // Debounce multiple rapid changes
         clearTimeout(this.debounceTimeout);
         this.debounceTimeout = setTimeout(() => {
