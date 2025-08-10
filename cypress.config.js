@@ -12,12 +12,18 @@ module.exports = defineConfig({
       on('task', {
         readLoginConfig() {
           try {
-            const configPath = path.join(__dirname, 'config', 'login-config.yaml');
+            const configPath = path.join(
+              __dirname,
+              'config',
+              'login-config.yaml',
+            );
             return fs.readFileSync(configPath, 'utf8');
           } catch (error) {
-            throw new Error(`Failed to read login configuration: ${error.message}`);
+            throw new Error(
+              `Failed to read login configuration: ${error.message}`,
+            );
           }
-        }
+        },
       });
 
       return config;

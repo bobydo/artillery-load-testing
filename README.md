@@ -235,3 +235,53 @@ $ yarn run watch:html-changes
 - **QA Engineer**: Ensure test selectors stay synchronized with UI
 - **Team Workflow**: Maintain configuration contract automatically
 - **CI/CD Pipeline**: Integrate with git hooks for automatic sync
+
+---
+
+## Cypress Debug
+
+## Claude Sonnet 4.0 gave up info => Cypress debugging is notoriously difficult because:
+1. Cypress runs in an Electron process (not pure Node.js)
+2. It has multiple processes running
+3. NODE_OPTIONS debugging often doesn't work reliably
+4. The packaged app limitations prevent standard Node.js debugging
+
+
+To debug Cypress and hit breakpoints in `cypress.config.js` in VS Code:
+
+1. **Start your backend server in a separate terminal:**
+   ```bash
+   yarn start:dev
+   ```
+2. **Set breakpoints in `cypress.config.js` where you want to pause.**
+3. **Use the provided launch configuration:**
+   - Open `.vscode/launch.json` and ensure you have:
+     ```json
+     {
+       "type": "node",
+       "request": "launch",
+       "name": "Debug Cypress Config (Node)",
+       "program": "${workspaceFolder}/node_modules/cypress/bin/cypress",
+       "args": ["run", "--spec", "cypress/e2e/login.cy.js"],
+       "console": "integratedTerminal",
+       "skipFiles": ["<node_internals>/**"],
+       "cwd": "${workspaceFolder}"
+     }
+     ```
+   - **Select "Debug Cypress Config (Node)"** in the Run & Debug panel and press **F5**.
+4. **Alternatively, attach to a running process:**
+   - In VS Code, press `Ctrl+Shift+P` → type `Debug: Attach to Node Process` → select the Cypress process.
+5. **You can also run from terminal:**
+   ```bash
+   node --inspect-brk ./node_modules/cypress/bin/cypress run --spec cypress/e2e/login.cy.js
+   ```
+   Then attach as above.
+
+### package.json debug script example
+```json
+"test:cypress:login:debug": "cross-env NODE_OPTIONS='--inspect' cypress run --spec cypress/e2e/login.cy.js"
+```
+
+**Note:**
+- Do not use `.bin/cypress` (it's a shell script). Always use the real Node.js entry: `node_modules/cypress/bin/cypress`.
+- This method allows you to hit breakpoints in your config and custom tasks.
